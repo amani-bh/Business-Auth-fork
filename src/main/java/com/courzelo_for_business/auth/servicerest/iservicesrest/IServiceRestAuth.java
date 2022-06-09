@@ -23,4 +23,5 @@ public interface IServiceRestAuth {
 	public Business activateCompte(String id) throws MessagingException, UnsupportedEncodingException ;
 	public List<Business> getAllInactive() ;
 	public List<Business> getAllActive() ;
+	public Boolean validateToken(String token);
 }

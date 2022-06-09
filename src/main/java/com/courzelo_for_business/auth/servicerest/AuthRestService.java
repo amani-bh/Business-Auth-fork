@@ -198,4 +198,10 @@ public class AuthRestService implements IServiceRestAuth {
     	return userRepository.existsByCompanyName(companyName);
     }
 
+    
+    public Boolean validateToken(String token) {
+    	return jwtUtils.validateJwtToken(token);
+    }
+
+    
 }

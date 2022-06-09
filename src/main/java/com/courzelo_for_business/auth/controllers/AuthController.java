@@ -118,6 +118,14 @@ public class AuthController {
 		
 		}
 	
+
+	@PostMapping("/validateToken/{token}")
+    public ResponseEntity<Boolean> verifyToken(@PathVariable String  token) {
+        return  new ResponseEntity<>( authService.validateToken(token),HttpStatus.OK);
+    }
+	
+	
+	
 	
 	}
 	
