@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 
 import com.courzelo_for_business.auth.entities.Business;
 import com.courzelo_for_business.auth.payload.request.LoginRequest;
 import com.courzelo_for_business.auth.payload.request.SignupRequest;
 import com.courzelo_for_business.auth.payload.response.JwtResponse;
-
+import com.sun.jersey.api.NotFoundException;
 public interface IServiceRestAuth {
 	
 	public Optional<Business> getUserById(String userId);
@@ -24,4 +25,11 @@ public interface IServiceRestAuth {
 	public List<Business> getAllInactive() ;
 	public List<Business> getAllActive() ;
 	public Boolean validateToken(String token);
+	
+	public void updateResetPasswordToken(String token, String email) throws NotFoundException;
+	
+	public Business getByResetPasswordToken(String token);
+	
+	public String processForgotPassword(HttpServletRequest request) throws MessagingException, UnsupportedEncodingException;
+	public Business updatePassword(HttpServletRequest request) ;
 }

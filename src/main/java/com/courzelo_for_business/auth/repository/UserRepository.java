@@ -15,4 +15,6 @@ public interface UserRepository extends MongoRepository<Business, String> {
   Boolean existsByEmail(String email);
 
   
+  public Business findByResetPasswordToken(String token);
+  
 }

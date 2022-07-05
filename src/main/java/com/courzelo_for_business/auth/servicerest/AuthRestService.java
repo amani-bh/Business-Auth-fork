@@ -10,16 +10,19 @@ import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.bind.annotation.PostMapping;
 import com.courzelo_for_business.auth.entities.Business;
 import com.courzelo_for_business.auth.entities.ERole;
 import com.courzelo_for_business.auth.entities.Role;
@@ -31,6 +34,7 @@ import com.courzelo_for_business.auth.repository.UserRepository;
 import com.courzelo_for_business.auth.security.jwt.JwtUtils;
 import com.courzelo_for_business.auth.security.services.UserDetailsImpl;
 import com.courzelo_for_business.auth.servicerest.iservicesrest.IServiceRestAuth;
+import com.sun.jersey.api.NotFoundException;
 
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -159,7 +163,7 @@ public class AuthRestService implements IServiceRestAuth {
 	    MimeMessage message = mailSender.createMimeMessage();              
 	    MimeMessageHelper helper = new MimeMessageHelper(message);
 	     
-	    helper.setFrom("jagermaya2@gmail.com", "Courzelo for business Support");
+	    helper.setFrom("haithemelmetoui313@gmail.com", "Courzelo for business Support");
 	    helper.setTo(business.getEmail());
 	     
 	    String subject = "Hello , ";
@@ -180,6 +184,8 @@ public class AuthRestService implements IServiceRestAuth {
 	    return business;
 	}
 
+	
+	
 	
 	public List<Business> getAllInactive() {
 		return userRepository.findByActive(false);	
@@ -203,5 +209,90 @@ public class AuthRestService implements IServiceRestAuth {
     	return jwtUtils.validateJwtToken(token);
     }
 
+    
+    
+    public Business getByResetPasswordToken(String token) {
+        return userRepository.findByResetPasswordToken(token);
+    }
+    
+    
+    public void updateResetPasswordToken(String token, String email) throws NotFoundException {
+    	Optional<Business> business = userRepository.findByEmail(email);
+        if (business != null) {
+        	business.get().setResetPasswordToken(token);
+            userRepository.save(business.get());
+        } else {
+            throw new NotFoundException("Could not find any customer with the email " + email);
+        }
+    }
+    
+    
+    
+	public String processForgotPassword(HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
+	    String email = request.getParameter("email");
+	    String token = RandomString.make(30);
+	    
+	    
+	    //upd forgot pass token
+	    
+	     updateResetPasswordToken(token,email);
+	     
+        //send mail 
+  
+        	String resetPasswordLink = "http://localhost:4200/BusinessReset?token=" + token;
+        	
+        	MimeMessage message = mailSender.createMimeMessage();              
+    	    MimeMessageHelper helper = new MimeMessageHelper(message);
+    	     
+    	    helper.setFrom("haithemelmetoui313@gmail.com", "Courzelo for business Support");
+    	    helper.setTo(email);
+    	     
+    	    String subject = "Hello , ";
+    	     
+    	    String content = "<p>Hello,</p>"
+    	            + "<p>You have requested to change you password .</p>"
+    	            + "<p>Bellow the link to modify you password </p>"
+    	            + "<p><a href="+resetPasswordLink+">Login</a></p>"
+    	            + "<br>"
+    	            + "<p>Good bye , "
+    	            ;
+    	     
+    	    helper.setSubject(subject);
+    	     
+    	    helper.setText(content, true);
+    	     
+    	    mailSender.send(message);
+    	    
+    	   
+          return token;
+}
+    
+    
+    
+     
+         
+    public Business updatePassword(HttpServletRequest request) {
+    	String token = request.getParameter("token");
+	    String newPassword = request.getParameter("password");
+	    Business business = getByResetPasswordToken(token); 
+	    
+	    
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+ 
+        business.setPassword(encodedPassword);
+        business.setResetPasswordToken(null);
+        userRepository.save(business);
+       
+        
+        return business;
+    }
+    
+    
+    
+    
+    
+    
+    
     
 }

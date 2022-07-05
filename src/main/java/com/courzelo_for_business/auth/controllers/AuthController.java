@@ -1,9 +1,12 @@
 package com.courzelo_for_business.auth.controllers;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
 import com.courzelo_for_business.auth.entities.Business;
 import com.courzelo_for_business.auth.payload.request.LoginRequest;
 import com.courzelo_for_business.auth.payload.request.SignupRequest;
 import com.courzelo_for_business.auth.servicerest.iservicesrest.IServiceRestAuth;
+import com.sun.jersey.api.NotFoundException;
 
 
 @CrossOrigin(origins = "http://localhost:4200/")
@@ -122,6 +128,41 @@ public class AuthController {
 	@PostMapping("/validateToken/{token}")
     public ResponseEntity<Boolean> verifyToken(@PathVariable String  token) {
         return  new ResponseEntity<>( authService.validateToken(token),HttpStatus.OK);
+    }
+	
+	
+	
+	
+	
+	@PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(authService.processForgotPassword(request));
+		}
+		catch(Exception e)
+		{  
+		    return new ResponseEntity<>( "Error accurred! "+ e.getMessage() , HttpStatus.BAD_REQUEST);
+		}
+		   
+		
+		
+       
+    }
+	
+	
+	@PostMapping("/ChangePassword")
+    public ResponseEntity<?> UpdatePassword(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(authService.updatePassword(request));
+		}
+		catch(Exception e)
+		{  
+		    return new ResponseEntity<>( "Error accurred! "+ e.getMessage() , HttpStatus.BAD_REQUEST);
+		}
+		   
+		
+		
+       
     }
 	
 	

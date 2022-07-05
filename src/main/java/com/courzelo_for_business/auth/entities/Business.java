@@ -67,6 +67,8 @@ public class Business {
 
   
   private Date creationDate;
+  
+  private String resetPasswordToken;
 
 
   @DBRef
@@ -255,6 +257,16 @@ public class Business {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+
+	public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
 	}
 
 	  
