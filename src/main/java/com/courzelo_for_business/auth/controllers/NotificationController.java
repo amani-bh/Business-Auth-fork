@@ -35,7 +35,7 @@ public class NotificationController {
     
     //private Notifications notifications = new Notifications(0,"","",false,new Date());
 
-    @GetMapping("/notify/{userId}")
+    @PostMapping("/notify/{userId}")
     public String getNotification(@PathVariable(name = "userId") String userId,@RequestBody  @Valid  String content) {
     	Notifications notifications = new Notifications("","",false,new Date());
         notifications.setMsg(content);
