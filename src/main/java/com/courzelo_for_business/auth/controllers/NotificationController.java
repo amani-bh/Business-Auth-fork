@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.courzelo_for_business.auth.entities.Notifications;
 import com.courzelo_for_business.auth.repository.NotificationRepository;
+import com.courzelo_for_business.auth.servicerest.iservicesrest.IServiceNotification;
 
 
 @CrossOrigin(origins = "http://localhost:4200/")
@@ -27,52 +28,38 @@ import com.courzelo_for_business.auth.repository.NotificationRepository;
 @RequestMapping( "/websocket-backend" )
 public class NotificationController {
 
-    @Autowired
-    private SimpMessagingTemplate template;
 
     @Autowired
-    private  NotificationRepository notifRepository;
+    private  IServiceNotification notifService;
     
-    //private Notifications notifications = new Notifications(0,"","",false,new Date());
-
+   
     @PostMapping("/notify/{userId}")
     public String getNotification(@PathVariable(name = "userId") String userId,@RequestBody  @Valid  String content) {
-    	Notifications notifications = new Notifications("","",false,new Date());
-        notifications.setMsg(content);
-        notifications.setUserId(userId);
-        notifRepository.save(notifications);
-
-        template.convertAndSend("/topic/notification", notifications);
-
-        return "Notifications successfully sent to Angular !";
+    	return notifService.getNotification(userId, content);
     }
     
-    @PostMapping("/notify/{idNotif}")
+    @PostMapping("/SetRead/{idNotif}")
     public void setReadNotification(@PathVariable(name = "idNotif") String idNotif) {
-    	Notifications notif=notifRepository.findByIdNotif(idNotif);
-    	notif.setRead(true);
-    	
-    	notifRepository.save(notif);  
+    	notifService.setReadNotification(idNotif);
     }
     
     
     @GetMapping("/unread/{userId}")
     public List<Notifications> getUserUnreadNotification(@PathVariable(name = "userId") String userId) {
-    	return notifRepository.findByUserIdAndRead(userId,false);
+    	return notifService.getUserUnreadNotification(userId);
     
     	
     }
     
     @GetMapping("/read/{userId}")
     public List<Notifications> getUserReadNotification(@PathVariable(name = "userId") String userId) {
-    	return notifRepository.findByUserIdAndRead(userId,true);
-    
+    	return notifService.getUserReadNotification(userId);
     	
     }
     
     @GetMapping("/all/{userId}")
     public List<Notifications> getUserNotification(@PathVariable(name = "userId") String userId) {
-    	return notifRepository.findByUserId(userId);
+    	return notifService.getUserNotification(userId);
     
     	
     }
