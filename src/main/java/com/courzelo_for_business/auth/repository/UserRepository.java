@@ -13,8 +13,9 @@ public interface UserRepository extends MongoRepository<Business, String> {
   List<Business> findByActive(boolean active);
   Boolean existsByCompanyName(String companyName);
   Boolean existsByEmail(String email);
+  public List<Business> findByCompanyIdBusinessAndEnabledIsFalse(String idBusiness);
+  List<Business> findByEnabled(boolean active);
+  Business findByVerificationCode(String code);
 
-  
-  public Business findByResetPasswordToken(String token);
   
 }

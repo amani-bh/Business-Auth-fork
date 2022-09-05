@@ -2,6 +2,7 @@ package com.courzelo_for_business.auth.entities;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -68,11 +69,16 @@ public class Business {
   
   private Date creationDate;
   
-  private String resetPasswordToken;
+  private Business company;
+  
+  private String verificationCode;
 
+  
 
   @DBRef
   private Set<Role> roles = new HashSet<>();
+  
+  private List<String> listCourses;
 
   public Business() {
   }
@@ -80,7 +86,7 @@ public class Business {
   
   public Business(String companyName,String email, String password, boolean active,boolean enabled,  String website, String nbEmployee, String firstName,
 			String lastName, String recrutementRole, String phone,
-			String industry, String country, String address, String logo, String description, Date creationDate) {
+			String industry, String country, String address, String logo, String description, Date creationDate, List<String> listCourses) {
 		super();
 		
 		this.companyName = companyName;
@@ -100,7 +106,28 @@ public class Business {
 		this.logo = logo;
 		this.description = description;
 		this.creationDate = creationDate;
+		this.listCourses=listCourses;
 	}
+  
+
+
+public Business(String companyName, String email, String password, boolean active, String firstName,
+			String lastName, String phone,Date creationDate, Business company,String verificationCode, List<String> listCourses) {
+		super();
+		
+		this.companyName = companyName;
+		this.email = email;
+		this.password = password;
+		this.active = active;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phone = phone;
+		this.creationDate = creationDate;
+		this.company=company;
+		this.verificationCode=verificationCode;
+		this.listCourses=listCourses;
+	}
+
   
   public String getIdBusiness() {
 		return idBusiness;
@@ -260,16 +287,34 @@ public class Business {
 	}
 
 
-	public String getResetPasswordToken() {
-		return resetPasswordToken;
+	public Business getCompany() {
+		return company;
 	}
 
 
-	public void setResetPasswordToken(String resetPasswordToken) {
-		this.resetPasswordToken = resetPasswordToken;
+	public void setCompany(Business company) {
+		this.company = company;
 	}
 
-	  
+
+	public String getVerificationCode() {
+		return verificationCode;
+	}
+
+
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
+	}
+
+	  public List<String> getListCourses() {
+			return listCourses;
+		}
+
+
+		public void setListCourses(List<String> listCourses) {
+			this.listCourses = listCourses;
+		}
+ 
 	 
 	}
 
